@@ -1,0 +1,34 @@
+
+
+services:
+  db:
+    image: postgres:15
+    container_name: aarogya-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: aarogya
+      POSTGRES_USER: aarogya_user
+      POSTGRES_PASSWORD: aarogya_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: .
+    container_name: aarogya-backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+psycopg2://aarogya_user:aarogya_pass@db:5432/aarogya
+      JWT_SECRET: nAQm0FLcoqHv5Hj_zNeMeKyZ5HdKKXyYn4bQHlTgmkBXRbJYEK-XE-H43p0KxXM3DYrr2n1wv_aZwFUEp70VQw
+      JWT_EXPIRE_MINUTES: 60
+      ENV: production
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/backend
+
+volumes:
+  postgres_data:
