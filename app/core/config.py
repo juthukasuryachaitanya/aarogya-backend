@@ -1,38 +1,46 @@
 import os
 
+
 class Settings:
-    APP_NAME: str = os.getenv("APP_NAME", "Aarogya Harvest")
+    # ======================
+    # APP CONFIG
+    # ======================
+    APP_NAME: str = os.getenv("APP_NAME", "Aarogya Harvest API")
     ENV: str = os.getenv("ENV", "development")
 
     # ======================
     # JWT CONFIG
     # ======================
-    JWT_SECRET: str = os.getenv("JWT_SECRET")
+    JWT_SECRET: str | None = os.getenv("JWT_SECRET")
     JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
-    JWT_EXPIRE_MINUTES: int = int(os.getenv("JWT_EXPIRE_MINUTES", "60"))
+    JWT_EXPIRE_MINUTES: int = int(
+        os.getenv("JWT_EXPIRE_MINUTES", "60")
+    )
 
     # ======================
     # DATABASE CONFIG
     # ======================
-    DATABASE_URL: str = os.getenv("DATABASE_URL")
+    DATABASE_URL: str | None = os.getenv("DATABASE_URL")
 
     # ======================
-    # CORS
+    # CORS CONFIG
     # ======================
-    ALLOWED_ORIGINS = os.getenv(
+    ALLOWED_ORIGINS: list[str] = os.getenv(
         "ALLOWED_ORIGINS",
         "http://localhost:5173"
     ).split(",")
 
     # ======================
-    # VALIDATION
+    # VALIDATION (FAIL FAST)
     # ======================
-    def validate(self):
+    def validate(self) -> None:
         if not self.JWT_SECRET:
             raise RuntimeError("❌ JWT_SECRET is not set")
 
         if not self.DATABASE_URL:
             raise RuntimeError("❌ DATABASE_URL is not set")
 
+
+# Singleton settings instance
 settings = Settings()
 settings.validate()

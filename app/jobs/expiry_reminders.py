@@ -1,36 +1,27 @@
-from sqlalchemy.orm import Session
 from datetime import date, timedelta
-
+from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.subscriptions.models import Subscription
 from app.alerts.service import send_admin_alert
 
-def subscription_expiry_reminders():
+def expiry_reminder_job():
     db: Session = SessionLocal()
-
     try:
-        today = date.today()
+        target_date = date.today() + timedelta(days=2)
 
-        targets = {
-            "EXPIRY_3_DAYS": today + timedelta(days=3),
-            "EXPIRY_1_DAY": today + timedelta(days=1),
-            "EXPIRY_TODAY": today,
-        }
+        subs = (
+            db.query(Subscription)
+            .filter(Subscription.expiry_date == target_date)
+            .all()
+        )
 
-        for alert_type, target_date in targets.items():
-            subs = db.query(Subscription).filter(
-                Subscription.expiry_date == target_date
-            ).all()
-
-            for sub in subs:
-                send_admin_alert(
-                    alert_type,
-                    {
-                        "Customer": sub.name,
-                        "Plan": sub.plan,
-                        "Ends On": str(sub.expiry_date),
-                        "Phone": sub.phone
-                    }
-                )
+        for sub in subs:
+            send_admin_alert(
+                "EXPIRY_REMINDER",
+                {
+                    "name": sub.name,
+                    "expiry": sub.expiry_date.isoformat(),
+                },
+            )
     finally:
         db.close()
