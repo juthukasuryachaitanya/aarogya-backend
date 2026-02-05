@@ -94,7 +94,6 @@ def startup_event():
 
     # Subscription expiry reminders — 9:00 AM IST
     scheduler.add_job(
-        subscription_expiry_reminders,
         CronTrigger(hour=9, minute=0),
         id="subscription_expiry_reminders",
         replace_existing=True,
