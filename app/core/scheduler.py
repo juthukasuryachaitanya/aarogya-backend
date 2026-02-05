@@ -1,22 +1,25 @@
+
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
 from pytz import timezone
+
 from app.jobs.daily_summary import daily_delivery_summary
-from app.jobs.expiry_reminder import expiry_reminder_job
+
+# -------------------------------------------------
+# Scheduler Configuration
+# -------------------------------------------------
 scheduler = BackgroundScheduler(
     timezone=timezone("Asia/Kolkata")
 )
 
+# -------------------------------------------------
+# DAILY DELIVERY SUMMARY (ADMIN LOG ONLY)
+# Runs every day at 7:00 AM IST
+# -------------------------------------------------
 scheduler.add_job(
     daily_delivery_summary,
-    "cron",
+    trigger="cron",
     hour=7,
     minute=0,
-)
-
-scheduler.add_job(
-    expiry_reminder_job,
-    "cron",
-    hour=9,
-    minute=0,
+    id="daily_delivery_summary",
+    replace_existing=True
 )
