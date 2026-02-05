@@ -31,7 +31,7 @@ from app.expenses.router import router as expenses_router
 # ==============================
 from app.core.scheduler import scheduler
 from app.jobs.delivery_summary import daily_delivery_summary
-from app.jobs.expiry_reminders import expiry_reminder_job
+from app.jobs.expiry_reminders import subscription_expiry_reminders
 from apscheduler.triggers.cron import CronTrigger
 
 # ==============================
@@ -94,6 +94,7 @@ def startup_event():
 
     # Subscription expiry reminders — 9:00 AM IST
     scheduler.add_job(
+        subscription_expiry_reminders,
         CronTrigger(hour=9, minute=0),
         id="subscription_expiry_reminders",
         replace_existing=True,
