@@ -1,19 +1,22 @@
-# app/alerts/service.py
 
 from app.alerts import templates
 from app.core.logger import logger
-from app.alerts.whatsapp import send_whatsapp_message
 
 
 def send_admin_alert(alert_type: str, data: dict):
     """
-    Central admin alert dispatcher
-    Handles:
+    Central admin alert dispatcher (INTERNAL ONLY)
+
+    Alerts handled:
     1. New subscription
     2. Pause
     3. Resume
     4. Daily summary
     5. Expiry reminder
+
+    NOTE:
+    - WhatsApp removed
+    - Alerts are logged only
     """
 
     try:
@@ -40,17 +43,20 @@ def send_admin_alert(alert_type: str, data: dict):
             return
 
         # -------------------------
-        # LOG (ALWAYS)
+        # LOG ONLY (SAFE MODE)
         # -------------------------
-        logger.info(f"[ADMIN ALERT - {alert_type}]\n{message}")
-
-        # -------------------------
-        # WHATSAPP SEND
-        # -------------------------
-        send_whatsapp_message(message)
+        logger.info(
+            f"""
+================ ADMIN ALERT =================
+TYPE: {alert_type}
+MESSAGE:
+{message}
+=============================================
+"""
+        )
 
     except Exception as e:
-        # Never crash business logic because alert failed
+        # Never break business flow due to alerts
         logger.error(
             f"[ALERT FAILED] Type={alert_type} Error={str(e)}",
             exc_info=True
