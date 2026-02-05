@@ -1,7 +1,7 @@
 import os
 
 
-class settings:
+class Settings:
     # ======================
     # APP CONFIG
     # ======================
@@ -42,5 +42,5 @@ class settings:
 
 
 # Singleton settings instance
-settings = settings()
+settings = Settings()
 settings.validate()
