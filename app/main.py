@@ -31,7 +31,7 @@ from app.expenses.router import router as expenses_router
 # ==============================
 from app.core.scheduler import scheduler
 from app.jobs.delivery_summary import daily_delivery_summary
-from app.jobs.expiry_reminders import subscription_expiry_reminders
+from app.jobs.expiry_reminders import expiry_reminder_job
 from apscheduler.triggers.cron import CronTrigger
 
 # ==============================
